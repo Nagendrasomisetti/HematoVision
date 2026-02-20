@@ -1,0 +1,221 @@
+<!-- templates/home.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HematoVision - Blood Cell Classification</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+            font-weight: 300;
+        }
+
+        .upload-box {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 50px 40px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .upload-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
+        }
+
+        .upload-box h2 {
+            margin-bottom: 30px;
+            font-size: 1.8em;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .file-upload-wrapper {
+            position: relative;
+            margin: 30px 0;
+        }
+
+        .file-input-label {
+            display: block;
+            padding: 40px;
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #f0f3ff 100%);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #667eea;
+        }
+
+        .file-input-label:hover {
+            border-color: #764ba2;
+            background: linear-gradient(135deg, #eef2f9 0%, #e8effe 100%);
+            color: #764ba2;
+        }
+
+        .file-input-label.drag-over {
+            border-color: #764ba2;
+            background: linear-gradient(135deg, #e8effe 0%, #dfe7ff 100%);
+            transform: scale(1.02);
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .upload-icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .upload-text-main {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .upload-text-sub {
+            font-size: 0.95em;
+            opacity: 0.7;
+        }
+
+        button {
+            background: linear-gradient(to right, #667eea, #764ba2);
+            color: white;
+            padding: 14px 40px;
+            font-size: 1em;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        button:hover {
+            background: linear-gradient(to right, #5568d3, #6a3a8f);
+            transform: scale(1.02);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .file-name {
+            margin-top: 15px;
+            font-size: 0.95em;
+            color: #667eea;
+            font-weight: 500;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .upload-box {
+                padding: 30px 25px;
+            }
+
+            .file-input-label {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔬 HematoVision</h1>
+            <p>Advanced Blood Cell Classification</p>
+        </div>
+
+        <div class="upload-box">
+            <h2>Upload Blood Cell Image</h2>
+            <form method="POST" enctype="multipart/form-data" id="uploadForm">
+                <div class="file-upload-wrapper">
+                    <label for="file" class="file-input-label" id="fileLabel">
+                        <div class="upload-icon">📁</div>
+                        <div class="upload-text-main">Click to upload or drag & drop</div>
+                        <div class="upload-text-sub">Supported formats: JPG, PNG, GIF (Max 10MB)</div>
+                    </label>
+                    <input type="file" id="file" name="file" accept="image/*" required>
+                    <div class="file-name" id="fileName"></div>
+                </div>
+                <button type="submit">Analyze Image</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('file');
+        const fileLabel = document.getElementById('fileLabel');
+        const fileName = document.getElementById('fileName');
+        const uploadForm = document.getElementById('uploadForm');
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                fileName.textContent = '✓ ' + e.target.files[0].name;
+            }
+        });
+
+        fileLabel.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileLabel.classList.add('drag-over');
+        });
+
+        fileLabel.addEventListener('dragleave', () => {
+            fileLabel.classList.remove('drag-over');
+        });
+
+        fileLabel.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileLabel.classList.remove('drag-over');
+            if (e.dataTransfer.files.length > 0) {
+                fileInput.files = e.dataTransfer.files;
+                fileName.textContent = '✓ ' + e.dataTransfer.files[0].name;
+            }
+        });
+    </script>
+</body>
+</html>

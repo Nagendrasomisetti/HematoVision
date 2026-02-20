@@ -1,0 +1,219 @@
+<!-- templates/result.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classification Result - HematoVision</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .result-box {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 50px 40px;
+            text-align: center;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-header {
+            margin-bottom: 30px;
+        }
+
+        .result-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .result-box h2 {
+            font-size: 2em;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .result-content {
+            margin: 30px 0;
+        }
+
+        .prediction-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .prediction-label {
+            font-size: 0.95em;
+            opacity: 0.95;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .prediction-value {
+            font-size: 2.2em;
+            font-weight: 700;
+            text-transform: capitalize;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .cell-type-info {
+            background: #f5f7fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .cell-type-info p {
+            font-size: 0.95em;
+            color: #555;
+            margin: 10px 0;
+        }
+
+        .result-box img {
+            max-width: 100%;
+            border-radius: 15px;
+            margin-top: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            border: 3px solid #f0f0f0;
+        }
+
+        .button-group {
+            margin-top: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 14px 30px;
+            font-size: 1em;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(to right, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(to right, #5568d3, #6a3a8f);
+            transform: scale(1.02);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .status-badge {
+            display: inline-block;
+            background: linear-gradient(to right, #84fab0 0%, #8fd3f4 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .result-box {
+                padding: 30px 25px;
+            }
+
+            .result-box h2 {
+                font-size: 1.6em;
+            }
+
+            .prediction-value {
+                font-size: 1.8em;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="result-box">
+            <div class="result-header">
+                <div class="result-icon">✅</div>
+                <div class="status-badge">Analysis Complete</div>
+                <h2>Classification Result</h2>
+            </div>
+
+            <div class="result-content">
+                <div class="prediction-card">
+                    <div class="prediction-label">Predicted Blood Cell Type</div>
+                    <div class="prediction-value">{{ class_label }}</div>
+                </div>
+
+                <div class="cell-type-info">
+                    <p><strong>Cell Type:</strong> {{ class_label|capitalize }}</p>
+                    <p><strong>Status:</strong> Analysis successful</p>
+                </div>
+
+                <img src="data:image/png;base64,{{ img_data }}" alt="Analyzed Blood Cell Image">
+            </div>
+
+            <div class="button-group">
+                <a href="{{ url_for('upload_file') }}" class="btn btn-primary">📁 Analyze Another Image</a>
+                <a href="{{ url_for('upload_file') }}" class="btn btn-secondary">← Back to Home</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
